@@ -1,0 +1,15 @@
+{
+    "contributors": [
+        "drrt",
+        "ajessup",
+        "y2bishop2y",
+        "kunzimariano",
+        "evan2645",
+        "suniljames",
+        "walmav",
+        "paul-argeniss",
+        "amartinezfayo"
+    ],
+    "label": "CLA",
+    "message": "We require contributors to sign our Contributor License Agreement. See https://github.com/spiffe/community for more information"
+}
