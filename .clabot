@@ -8,8 +8,24 @@
         "suniljames",
         "walmav",
         "paul-argeniss",
-        "amartinezfayo"
+        "amartinezfayo",
+        "csstaub",
+        "benschumacher",
+        "sul3n3t",
+        "MrMitchKock",
+        "dopey",
+        "mmalone",
+        "smawson",
+        "gosuri",
+        "pshafton",
+        "bw-z",
+        "mlakewood",
+        "bobzilladev",
+        "rra",
+        "rd2seu",
+        "juli",
+        "cesarc"
     ],
     "label": "CLA",
-    "message": "We require contributors to sign our Contributor License Agreement. See https://github.com/spiffe/community for more information"
+    "message": "We require contributors to sign our Contributor License Agreement. See https://github.com/spiffe/spiffe for more information"
 }
