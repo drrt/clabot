@@ -24,7 +24,8 @@
         "rra",
         "rd2seu",
         "juli",
-        "cesarc"
+        "cesarc",
+        "boz"
     ],
     "label": "CLA",
     "message": "We require contributors to sign our Contributor License Agreement. See https://github.com/spiffe/spiffe for more information"
