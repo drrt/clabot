@@ -25,7 +25,8 @@
         "rd2seu",
         "juli",
         "cesarc",
-        "boz"
+        "boz",
+        "odeke-em"
     ],
     "label": "CLA",
     "message": "We require contributors to sign our Contributor License Agreement. See https://github.com/spiffe/spiffe for more information"
