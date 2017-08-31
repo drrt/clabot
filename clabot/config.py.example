@@ -1,0 +1,30 @@
+
+# bot config
+bot_label = 'CLA'
+bot_message = 'We require contributors to sign our Contributor License Agreement. See https://foo.bar for more information'
+bot_context = 'cla/bot'
+
+
+# the ID of the sheet that contains the authentication information
+sheet_id = 'xxx'
+
+# the query that returns all of the relevant rows from the correct sheet
+sheet_query = 'Form Responses 1!A2:K'
+
+# the columns that containt TRUE/FALSE and the github user names
+sheet_true_column = 1
+sheet_user_column = 3
+
+# google API key. the sheet must be publicly readable, but the key is needed for 
+# programtic access
+google_api_key = 'xxx'
+
+# base64 encoded key extracted from the PEM provided by GitHub for app authentication
+# openssl rsa -outform der -in private-key.pem | base64
+github_key_base64 = 'xxx'
+
+# GitHub app id 
+app_id = 1337
+
+# only nevessary for webhook-based integrations
+github_api_key = 'xxx'
