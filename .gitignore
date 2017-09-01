@@ -1,3 +1,4 @@
 clabot/lib
 clabot/config.py
+clabot/pr.py
 clabot/setup.cfg

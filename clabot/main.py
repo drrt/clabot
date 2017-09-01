@@ -16,16 +16,18 @@ jwt.register_algorithm('RS256', RSAAlgorithm(RSAAlgorithm.SHA256))
 
 from config import *
 
+# github is slow sometimes, and GAE's default timeouts are agressive
+if __name__ != '__main__':
+    from google.appengine.api import urlfetch
+    urlfetch.set_default_fetch_deadline(10)
+
 ##
 ## there's no real recourse on errors, so we won't be
 ## handling many
 ##
 
-# github is slow sometimes, and GAE's default timeouts are agressive
-from google.appengine.api import urlfetch
-urlfetch.set_default_fetch_deadline(10)
-
 class WebHook(webapp2.RequestHandler):
+
     def post(self):
 
         result = json.loads(self.request.body)
@@ -76,20 +78,30 @@ def get_token(id):
 # fetch an array of github IDs from the Google Sheet
 def get_signers():
     sheet_url = 'https://sheets.googleapis.com/$discovery/rest?version=v4'
-    results = []
+    usernames = []
+    orgs = []
 
     http = httplib2.Http()
     service = discovery.build('sheets', 'v4', http=http,
        discoveryServiceUrl=sheet_url, developerKey=google_api_key)
 
     result = service.spreadsheets().values().get(
-        spreadsheetId=sheet_id, range=sheet_query).execute()
+        spreadsheetId=sheet_id, range=sheet_user_query).execute()
 
     for r in result.get('values', []):
-        if r[sheet_true_column] == 'TRUE' and r[sheet_user_column] != '': 
-            results.append(r[sheet_user_column])
+        try:
+            if r[sheet_user_true_column] == 'TRUE' and r[sheet_user_name_column] != '': 
+                usernames.append(r[sheet_user_name_column])
+        except:
+            print('Malformed data {}'.format(r))
 
-    return results
+    result = service.spreadsheets().values().get(
+        spreadsheetId=sheet_id, range=sheet_org_query).execute()
+
+    for r in result.get('values', []):
+        orgs.append(r[sheet_org_column])
+
+    return (usernames, orgs)
 
 
 # check the PR for commits with unsigned authors
@@ -102,24 +114,33 @@ def check_pr(pr, token):
 
     commits = github_get(pr.get('commits_url'), token)
 
-    authorized_users = get_signers()
+    (authorized_users, authorized_orgs) = get_signers()
 
     # check every commit in the PR
     for c in commits:
+        authorized = False
         user = c.get('author').get('login')
         sha = c.get('sha')
         status_url_sha = str(status_url).format(sha=sha)
 
         user_email = c.get('commit').get('author').get('email')
-        user_name = c.get('commit').get('author').get('name')
-        # TODO match company domains
-        print(u'Checking {} "{}"'.format(user_email, user_name))
+        _, user_domain = user_email.split('@')
+
+        print(u'Checking {}/{}'.format(user, user_email))
 
         if user in authorized_users:
-            print('Author "{}" HAS signed the CLA for commit {}'.format(user, sha))
+            authorized = True
+            print(u'Author {}/{} authorized by username'.format(user, user_email))
+
+        if user_domain in authorized_orgs:
+            authorized = True
+            print(u'Author {}/{} authorized by domain'.format(user, user_email))
+
+        if authorized:
+            print('Author is covered by CLA for commit {}'.format(sha))
             github_post(status_url_sha, token, { 'state': 'success', 'context': bot_context })
         else:
-            print('Author "{}" has NOT signed the CLA for commit {}'.format(user, sha ))
+            print('Author is NOT covered by CLA for commit {}'.format(sha))
             github_post(status_url_sha, token, { 'state': 'error', 'context': bot_context })
             signed = False
 
@@ -182,5 +203,7 @@ def github_delete(url, token):
 app = webapp2.WSGIApplication([('/', WebHook)], debug=True)
 
 if __name__ == '__main__':
+    import pr
+    check_pr(json.loads(pr.pr_json), '10242bc9c127febcefc0a69850ac5a73700e802d')
     sys.exit(0)
 
