@@ -96,12 +96,11 @@ def get_signers():
 def check_pr(pr, token):
     signed = True
 
-    links = pr.get('_links')
     status_url = pr.get('head').get('repo').get('statuses_url')
-    issue_url = links.get('issue').get('href')
-    comments_url = links.get('comments').get('href')
+    issue_url = pr.get('issue_url')
+    comments_url = pr.get('comments_url')
 
-    commits = github_get(links.get('commits').get('href'), token)
+    commits = github_get(pr.get('commits_url'), token)
 
     authorized_users = get_signers()
 
@@ -110,6 +109,11 @@ def check_pr(pr, token):
         user = c.get('author').get('login')
         sha = c.get('sha')
         status_url_sha = str(status_url).format(sha=sha)
+
+        user_email = c.get('commit').get('author').get('email')
+        user_name = c.get('commit').get('author').get('name')
+        # TODO match company domains
+        print(u'Checking {} "{}"'.format(user_email, user_name))
 
         if user in authorized_users:
             print('Author "{}" HAS signed the CLA for commit {}'.format(user, sha))
