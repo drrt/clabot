@@ -119,29 +119,34 @@ def check_pr(pr, token):
     # check every commit in the PR
     for c in commits:
         authorized = False
-        user = c.get('author').get('login')
-        sha = c.get('sha')
-        status_url_sha = str(status_url).format(sha=sha)
+        try:
+            user = c.get('author').get('login')
+            sha = c.get('sha')
+            status_url_sha = str(status_url).format(sha=sha)
 
-        user_email = c.get('commit').get('author').get('email')
-        _, user_domain = user_email.split('@')
+            user_email = c.get('commit').get('author').get('email')
+            _, user_domain = user_email.split('@')
 
-        print(u'Checking {}/{}'.format(user, user_email))
+            print(u'Checking {}/{}'.format(user, user_email))
 
-        if user in authorized_users:
-            authorized = True
-            print(u'Author {}/{} authorized by username'.format(user, user_email))
+            if user in authorized_users:
+                authorized = True
+                print(u'Author {}/{} authorized by username'.format(user, user_email))
 
-        if user_domain in authorized_orgs:
-            authorized = True
-            print(u'Author {}/{} authorized by domain'.format(user, user_email))
+            if user_domain in authorized_orgs:
+                authorized = True
+                print(u'Author {}/{} authorized by domain'.format(user, user_email))
 
-        if authorized:
-            print('Author is covered by CLA for commit {}'.format(sha))
-            github_post(status_url_sha, token, { 'state': 'success', 'context': bot_context })
-        else:
-            print('Author is NOT covered by CLA for commit {}'.format(sha))
-            github_post(status_url_sha, token, { 'state': 'error', 'context': bot_context })
+            if authorized:
+                print('Author is covered by CLA for commit {}'.format(sha))
+                github_post(status_url_sha, token, { 'state': 'success', 'context': bot_context })
+            else:
+                print('Author is NOT covered by CLA for commit {}'.format(sha))
+                github_post(status_url_sha, token, { 'state': 'error', 'context': bot_context })
+                signed = False
+
+        except:
+            print('Trouble fetching data for commit {}'.format(c))
             signed = False
 
     # check if the bot has previously labeled or commented
