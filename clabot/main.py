@@ -27,9 +27,7 @@ if __name__ != '__main__':
 ##
 
 class WebHook(webapp2.RequestHandler):
-
     def post(self):
-
         result = json.loads(self.request.body)
         action = result.get('action')
         # installation is the ID of the entity calling out to us,
@@ -91,7 +89,7 @@ def get_signers():
     for r in result.get('values', []):
         try:
             if r[sheet_user_true_column] == 'TRUE' and r[sheet_user_name_column] != '': 
-                usernames.append(r[sheet_user_name_column])
+                usernames.append(r[sheet_user_name_column].strip())
         except:
             print('Malformed data {}'.format(r))
 
@@ -99,7 +97,7 @@ def get_signers():
         spreadsheetId=sheet_id, range=sheet_org_query).execute()
 
     for r in result.get('values', []):
-        orgs.append(r[sheet_org_column])
+        orgs.append(r[sheet_org_column].strip())
 
     return (usernames, orgs)
 
