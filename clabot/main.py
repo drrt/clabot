@@ -108,7 +108,7 @@ def get_signers():
 def check_pr(pr, token):
     signed = True
 
-    status_url = pr.get('head').get('repo').get('statuses_url')
+    status_url = pr.get('base').get('repo').get('statuses_url')
     issue_url = pr.get('issue_url')
     comments_url = pr.get('comments_url')
 
