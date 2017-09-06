@@ -153,8 +153,10 @@ def check_pr(pr, token):
 
     if not signed:
         print('CLA not signed for at least one commit')
-        print('Deleting any existing labels')
-        github_delete(issue_url + '/labels/' + bot_label, token)
+        if bot_labels:
+            print('Deleting any existing labels')
+            github_delete(issue_url + '/labels/' + bot_label, token)
+
         if bot_comments:
             print('PR already has a bot comment, skipping')
         else:
@@ -163,7 +165,10 @@ def check_pr(pr, token):
 
     else:
         print('CLA has been signed for all commits, adding label to PR')
-        github_post(issue_url + '/labels', token, [ bot_label ])
+        if not bot_labels:
+            print('No label found, adding one')
+            github_post(issue_url + '/labels', token, [ bot_label ])
+
         for c in bot_comments:
             print('Removing bot comments')
             github_delete(c.get('url'), token)
