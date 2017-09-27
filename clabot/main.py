@@ -212,6 +212,6 @@ app = webapp2.WSGIApplication([('/', WebHook)], debug=True)
 
 if __name__ == '__main__':
     import pr
-    check_pr(json.loads(pr.pr_json), '10242bc9c127febcefc0a69850ac5a73700e802d')
+    check_pr(json.loads(pr.pr_json), 'xxxx')
     sys.exit(0)
 
